@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_real_app/transactionItem.dart';
+import './transactions.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,6 +46,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  
+  final List<Transactions> list = [
+    Transactions(
+      id: 't1',
+      title: 'new shoes',
+      amount: 69.99,
+      date: DateTime.now(),
+    ),
+    Transactions(
+      id: 't2',
+      title: 'Weekly Groceries',
+      amount: 16.54,
+      date: DateTime.now(),
+    ),
+  ];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,13 +69,22 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Flutter Real App"),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        //crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              width: double.infinity,
+              //width: double.infinity,
               padding: EdgeInsets.all(16),
               child: Card(
-                child: Text("My First Card View..."),
                 elevation: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    TextField(decoration: InputDecoration(labelText: "Title"),),
+                    TextField(decoration: InputDecoration(labelText: "Amount"),),
+                    FlatButton(onPressed: (){}, child: Text("Add Transaction"))
+                  ],
+                ),
               ),
             ),
             Card(
@@ -69,7 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.blueGrey,
                 child: Text("Another Card with different format.", style: TextStyle(color: Colors.white),),
               ),
-            )
+            ),
+            Column(
+              children: list.map((tx) {   //tx is Transactions model class
+                return TransactionItem(tx);
+              }).toList(),
+            ),
           ],
         )
     );
