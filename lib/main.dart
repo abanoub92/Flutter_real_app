@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Quicksand',
         //create a specific style to all text widgets in the app
         textTheme: ThemeData.light().textTheme.copyWith(
-          headline6: TextStyle(
+          headline: TextStyle(
             fontFamily: 'Quicksand',
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         //create a specific style to specific widget
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-            headline6: TextStyle(
+            headline: TextStyle(
               fontFamily: 'OpenSans',
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -73,18 +73,18 @@ class _MyHomePageState extends State<MyHomePage> {
   //String amountText;  //use this option with onChange: method in TextField()
 
   final List<Transactions> _list = [
-    // Transactions(
-    //   id: 't1',
-    //   title: 'new shoes',
-    //   amount: 69.99,
-    //   date: DateTime.now(),
-    // ),
-    // Transactions(
-    //   id: 't2',
-    //   title: 'Weekly Groceries',
-    //   amount: 16.54,
-    //   date: DateTime.now(),
-    // ),
+    Transactions(
+      id: 't1',
+      title: 'new shoes',
+      amount: 69.99,
+      date: DateTime.now(),
+    ),
+    Transactions(
+      id: 't2',
+      title: 'Weekly Groceries',
+      amount: 16.54,
+      date: DateTime.now(),
+    ),
   ];
 
   //get the recent transactions only that happend in this week
@@ -134,7 +134,10 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         //crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Chart(recentTransactions),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Chart(recentTransactions),
+            ),
             TransactionList(_list),
           ],
         )

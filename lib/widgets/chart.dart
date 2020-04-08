@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_real_app/models/transactions.dart';
 import 'package:intl/intl.dart';
+
+import '../models/transactions.dart';
+import './chart_bar.dart';
 
 class Chart extends StatelessWidget{
 
@@ -22,7 +24,13 @@ class Chart extends StatelessWidget{
         }
       }
 
-      return {'Day': DateFormat.E(weekDay), 'amount': totalSum};
+      return {'Day': DateFormat.E().format(weekDay), 'amount': totalSum};
+    });
+  }
+
+   double get totalSpending{
+    return groupedTransactionsValues.fold(0.0, (sum, item){
+        return sum + item['amount'];
     });
   }
 
@@ -32,9 +40,13 @@ class Chart extends StatelessWidget{
       elevation: 6,
       margin: EdgeInsets.all(20),
       child: Row(
-        children: <Widget>[
-
-        ],
+        children: groupedTransactionsValues.map((data){
+          return ChartBar(
+            data['day'] == null ? 'some day' : data['day'], 
+            data['amount'], 
+            totalSpending == 0.0 ? 0.0 : (data['amount'] as double) / totalSpending
+          );
+        }).toList(),
       ),
     );
   }
