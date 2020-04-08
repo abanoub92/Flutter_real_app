@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_real_app/transactionItem.dart';
-import './transactions.dart';
+import 'package:flutter_real_app/widgets/chart.dart';
+import 'package:flutter_real_app/widgets/new_transactions.dart';
+import './widgets/transactionList.dart';
+import './models/transactions.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +22,27 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
+        accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        //create a specific style to all text widgets in the app
+        textTheme: ThemeData.light().textTheme.copyWith(
+          headline6: TextStyle(
+            fontFamily: 'Quicksand',
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        //create a specific style to specific widget
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+            headline6: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            )
+          )
+        )
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -46,64 +68,84 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
-  final List<Transactions> list = [
-    Transactions(
-      id: 't1',
-      title: 'new shoes',
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transactions(
-      id: 't2',
-      title: 'Weekly Groceries',
-      amount: 16.54,
-      date: DateTime.now(),
-    ),
+
+  //String titleText;   //use this option with onChange: method in TextField()
+  //String amountText;  //use this option with onChange: method in TextField()
+
+  final List<Transactions> _list = [
+    // Transactions(
+    //   id: 't1',
+    //   title: 'new shoes',
+    //   amount: 69.99,
+    //   date: DateTime.now(),
+    // ),
+    // Transactions(
+    //   id: 't2',
+    //   title: 'Weekly Groceries',
+    //   amount: 16.54,
+    //   date: DateTime.now(),
+    // ),
   ];
+
+  //get the recent transactions only that happend in this week
+  List<Transactions> get recentTransactions{
+    return _list.where((transactions) {
+      return transactions.date.isAfter(
+        DateTime.now().subtract(Duration(days: 7),)
+      );
+    }).toList();
+  }
+
+  void _createNewTransaction(String title, double amount){
+    final Transactions transaction = Transactions(
+      id: DateTime.now().toString(), 
+      title: title, 
+      amount: amount, 
+      date: DateTime.now()
+    );
+
+    setState(() {
+      _list.add(transaction);
+    });
+  }
+
+  void _startAddNewTransaction(BuildContext context){
+    showModalBottomSheet(context: context, builder: (_){   //_ means unwanted parameter (context)
+        return NewTransactions(_createNewTransaction);
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Flutter Real App"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add), 
+            onPressed: (){
+              _startAddNewTransaction(context);
+            }
+            )
+        ],
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         //crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              //width: double.infinity,
-              padding: EdgeInsets.all(16),
-              child: Card(
-                elevation: 5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    TextField(decoration: InputDecoration(labelText: "Title"),),
-                    TextField(decoration: InputDecoration(labelText: "Amount"),),
-                    FlatButton(onPressed: (){}, child: Text("Add Transaction"))
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              margin: EdgeInsets.all(16),
-              elevation: 6,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
-                color: Colors.blueGrey,
-                child: Text("Another Card with different format.", style: TextStyle(color: Colors.white),),
-              ),
-            ),
-            Column(
-              children: list.map((tx) {   //tx is Transactions model class
-                return TransactionItem(tx);
-              }).toList(),
-            ),
+            Chart(recentTransactions),
+            TransactionList(_list),
           ],
         )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add), 
+        onPressed: (){
+          _startAddNewTransaction(context);
+        }
+        ),
     );
   }
 }
