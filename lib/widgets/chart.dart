@@ -14,6 +14,7 @@ class Chart extends StatelessWidget{
   List<Map<String, Object>> get groupedTransactionsValues {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(Duration(days: index));
+      
       double totalSum = 0.0;
 
       for (int i = 0; i < recentlyTransactions.length; i++){
@@ -24,8 +25,11 @@ class Chart extends StatelessWidget{
         }
       }
 
-      return {'Day': DateFormat.E().format(weekDay), 'amount': totalSum};
-    });
+      return {
+        'day': DateFormat.E().format(weekDay).substring(0, 1), 
+        'amount': totalSum
+      };
+    }); //.reversed.toList(); is resvere the list data items
   }
 
    double get totalSpending{
@@ -41,10 +45,14 @@ class Chart extends StatelessWidget{
       margin: EdgeInsets.all(20),
       child: Row(
         children: groupedTransactionsValues.map((data){
-          return ChartBar(
-            data['day'] == null ? 'some day' : data['day'], 
-            data['amount'], 
-            totalSpending == 0.0 ? 0.0 : (data['amount'] as double) / totalSpending
+          //creates a widget that controls how a child of a (row, column or flex) flexs 
+          return Flexible(
+            fit: FlexFit.tight,
+            child: ChartBar(
+              data['day'], 
+              data['amount'], 
+              totalSpending == 0.0 ? 0.0 : (data['amount'] as double) / totalSpending
+            ),
           );
         }).toList(),
       ),

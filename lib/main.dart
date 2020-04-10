@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_real_app/widgets/chart.dart';
 import 'package:flutter_real_app/widgets/new_transactions.dart';
-import './widgets/transactionList.dart';
+import './widgets/transaction_list.dart';
 import './models/transactions.dart';
 
 void main() => runApp(MyApp());
@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
+        errorColor: Colors.red,
         fontFamily: 'Quicksand',
         //create a specific style to all text widgets in the app
         textTheme: ThemeData.light().textTheme.copyWith(
@@ -32,6 +34,8 @@ class MyApp extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
+          button: TextStyle( color: Colors.white,),
+          
         ),
         //create a specific style to specific widget
         appBarTheme: AppBarTheme(
@@ -96,16 +100,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _createNewTransaction(String title, double amount){
+  void _createNewTransaction(String title, double amount, DateTime selectedDate){
     final Transactions transaction = Transactions(
       id: DateTime.now().toString(), 
       title: title, 
       amount: amount, 
-      date: DateTime.now()
+      date: selectedDate,
     );
 
     setState(() {
       _list.add(transaction);
+    });
+  }
+
+  void _deleteTransaction(String id){
+    setState(() {
+      _list.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -134,11 +144,8 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         //crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Chart(recentTransactions),
-            ),
-            TransactionList(_list),
+            Chart(recentTransactions),
+            TransactionList(_list, _deleteTransaction),
           ],
         )
       ),
