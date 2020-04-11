@@ -10,18 +10,21 @@ class ChartBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
+    //set the size of widgets depend on the parent size that giving by layoutBuilder
+    return LayoutBuilder(builder: (ctx, constraints){
+      return Column(
         children: <Widget>[
           //Creates a widget that scales and positions it's child with it self according to fit.
           //if it widget is a text it's shrink the text
-          FittedBox(
-            child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
-          ),
-          SizedBox(height: 4,),
           Container(
-            height: 60,
+            height: constraints.maxHeight * 0.15,
+            child: FittedBox(
+              child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
+            ),
+          ),
+          SizedBox(height: constraints.maxHeight * 0.05,),
+          Container(
+            height: constraints.maxHeight * 0.6,
             width: 10,
             //Stack is a widget take array of values of widgets overlabing each other
             child: Stack(
@@ -46,10 +49,13 @@ class ChartBar extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 4,),
-          Text(label),
+          SizedBox(height: constraints.maxHeight * 0.05,),
+          Container(
+            height: constraints.maxHeight * 0.15,
+            child: FittedBox(child: Text(label))
+          ),
         ],
-      ),
-    );
+      );
+    },); 
   }
 }
